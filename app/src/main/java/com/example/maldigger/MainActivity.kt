@@ -1,11 +1,11 @@
 package com.example.maldigger
-
+// token for github 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
 import android.app.Activity
 import android.os.Build
 import android.os.Bundle
+import android.os.StrictMode
+import android.os.StrictMode.ThreadPolicy
 import android.util.Log
-import android.util.Log.d
-import android.util.Log.e
 import android.view.Gravity
 import android.view.View
 import android.widget.EditText
@@ -13,98 +13,17 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import com.android.volley.AuthFailureError
-import com.android.volley.Response
-import com.android.volley.toolbox.JsonObjectRequest
-import com.android.volley.toolbox.Volley
+import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import org.json.JSONObject
 import java.io.IOException
-import java.util.*
-import kotlin.collections.HashMap
-import kotlin.collections.set
-
 
 class MainActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-    }
-
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun checkUrl(url: String) {
-
-        //val find = Base64.getEncoder().withoutPadding().encodeToString(url.toByteArray())
-        val queue = Volley.newRequestQueue(this)
-        //val key = "2e50561b4a38bc74e24303a15f4c4afb404d4a5252470225a4021994806042cb"
-        //val urltofind = "https://www.virustotal.com/vtapi/v2/url/scan"
-        val urltofind = "https://www.virustotal.com/api/v3/urls"//+find+"/analyse"
-       // Log.d("nothing",find)
-
-        //val params = HashMap<String,String>()
-        //params["url"] = "google.com"
-
-        val jsonObject = object: JSONObject(){}
-        jsonObject.put("url", "google.com")
-        val str:String = jsonObject.toString()
-
-        // Request a JsonObject response from the provided URL.
-
-        val sr = object: JsonObjectRequest(
-            Method.POST, urltofind, null,
-            Response.Listener { response ->
-                d("success request", "successful $response")
-                /* val data = response.getString("data")
-                val json = JSONObject(data)
-                val attributes = json.getJSONObject("attributes")
-                val last_analysis_stats = attributes.getJSONObject("last_analysis_stats")
-                val harmless = last_analysis_stats.getInt("harmless")
-                val malicious = last_analysis_stats.getInt("malicious")
-                val suspicious = last_analysis_stats.getInt("suspicious")
-                val undetected = last_analysis_stats.getInt("undetected")
-
-                //d("success request", "this is attributes " + harmless.toString())
-                //Toast.makeText(this, "you r safe", Toast.LENGTH_LONG).show()
-
-                if (malicious<5)
-                    Toast(this).showCustomToast("Good to Go!!", this)
-                else
-                    Toast(this).showCustomToast("Good to Go!!", this)*/
-            },
-            Response.ErrorListener { error ->
-
-                e("error", "error occurred in error listener :  $error")
-                //var digit = error.networkResponse.statusCode
-
-            },
-        )
-
-        {   /*
-            @Throws(AuthFailureError::class)
-            override fun getBody(): ByteArray {
-                e("GetBody", "this is getbody()")
-                return str.toByteArray(charset("utf-8"))
-            }
-            */
-            @Throws(AuthFailureError::class)
-             override fun getParams(): Map<String, String> {
-                val params = HashMap<String, String>()
-                params["url"] = "google.com"
-                e("getParams", "we are here : $params")
-                return params
-            }
-
-            @Throws(AuthFailureError::class)
-            override fun getHeaders(): Map<String, String> {
-                val headers: MutableMap<String, String> = HashMap()
-                headers["x-apikey"]="2e50561b4a38bc74e24303a15f4c4afb404d4a5252470225a4021994806042cb"
-                e("Header", "this is header :  $headers")
-                return headers
-            }
-        }
-
-        /* Add the request to the RequestQueue. */
-        queue.add(sr)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -113,10 +32,11 @@ class MainActivity : AppCompatActivity() {
         val editText = findViewById<View>(R.id.editText) as EditText
         val url = editText.text.toString()
         //startActivity(intent)
+
         try {
-            checkUrl(url)
+            post("https://www.virustotal.com/api/v3/urls",url)
         } catch (e: IOException) {
-            Log.d("error", "error $e")
+            Log.d("error", "error to gadbad hai daya $e")
         }
 
     }
@@ -139,7 +59,74 @@ class MainActivity : AppCompatActivity() {
             show()
         }
     }
-}
+
+    @Throws(IOException::class)
+    private fun scan(id:String){
+
+        val request = Request.Builder().url("https://www.virustotal.com/api/v3/urls/" + id ).get().addHeader("x-apikey", "2e50561b4a38bc74e24303a15f4c4afb404d4a5252470225a4021994806042cb").build()
+        val client: OkHttpClient = OkHttpClient()
+        val call = client.newCall(request)
+        try {
+            val response = call.execute()
+            if (response.isSuccessful) {
+                val body = response.body!!.string()
+                val json = JSONObject(body)
+                val data = json.getJSONObject("data")
+                val attributes = data.getJSONObject("attributes")
+                val last_analysis_stats = attributes.getJSONObject("last_analysis_stats")
+                val harmless = last_analysis_stats.getInt("harmless")
+                val malicious = last_analysis_stats.getInt("malicious")
+                val suspicious = last_analysis_stats.getInt("suspicious")
+                Log.i("Successful Scan ", " harmless count: $harmless")
+
+                if (malicious<10)
+                    Toast(this).showCustomToast("Good to Go!!", this)
+                else
+                    Toast(this).showCustomToast("Suspicious!!", this)
+            }
+            response.close()
+        }
+        catch (e:Exception){
+            Log.i ( "Error ", "in scan() :  $e")
+
+        }
+
+    }
+
+    @Throws(IOException::class)
+    private fun post(url: String, scan_url: String) {
+
+        val gfgPolicy = ThreadPolicy.Builder().permitAll().build()
+                StrictMode.setThreadPolicy(gfgPolicy)
+        val body = MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("url", scan_url).build()
+        val request = Request.Builder().url("https://www.virustotal.com/api/v3/urls").post(body).addHeader("x-apikey", "2e50561b4a38bc74e24303a15f4c4afb404d4a5252470225a4021994806042cb").build()
+        val client: OkHttpClient = OkHttpClient()
+
+        val call = client.newCall(request)
+        try {
+            val response = call.execute()
+            if (response.isSuccessful) {
+                val body = response.body!!.string()
+                val json = JSONObject(body)
+                val data = json.getJSONObject("data")
+                var id = data.getString("id")
+                id = id.split("-").toTypedArray()[1]
+                Log.i("URL Submitted", "ID generated:  $id")
+                scan(id)
+
+            }
+            response.close()
+
+        }
+        catch (e:Exception){
+        Log.i ( "Error ", "in post() :  $e")
+
+        }
+    }
+
+}  //end of main class
+
+
 
 
 
