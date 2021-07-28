@@ -39,7 +39,7 @@
 
                 <FrameLayout
                     android:id="@+id/button_accent_border"
-                    android:layout_width="4dp"
+                    android:layout_width="10dp"
                     android:layout_height="match_parent"
                     android:background="#3EAA56" />
 
@@ -61,4 +61,5 @@
 
         </androidx.cardview.widget.CardView>
     </RelativeLayout>
+
 </RelativeLayout>
