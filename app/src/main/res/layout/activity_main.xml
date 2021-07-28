@@ -1,48 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:orientation="vertical"
-tools:context=".MainActivity"
-tools:ignore="HardcodedText">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    tools:context=".MainActivity"
+    tools:ignore="HardcodedText">
 
-<!--this is the outlined layout box for the edit text-->
-<!--this layout must be used to reposition or change the
+    <!--this is the outlined layout box for the edit text-->
+    <!--this layout must be used to reposition or change the
     height and width of the edit text-->
-<!--to get the outlined edit text the style attribute as
+    <!--to get the outlined edit text the style attribute as
     following must be invoked-->
-<com.google.android.material.textfield.TextInputLayout
-    android:id="@+id/filledTextField"
-    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="40dp"
-    android:layout_marginTop="150dp"
-    android:layout_marginEnd="40dp"
-    android:text="Enter Something">
-
-    <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/editText"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/filledTextField"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Enter URL"
+        android:layout_height="80dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="150dp"
+        android:layout_marginEnd="40dp"
+        app:endIconMode="clear_text"
+        app:errorEnabled="true">
 
-        />
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editText"
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:hint="Enter URL"
+            android:marqueeRepeatLimit="marquee_forever" />
 
-</com.google.android.material.textfield.TextInputLayout>
+    </com.google.android.material.textfield.TextInputLayout>
 
-<!--sample button to submit entered data inside from edit text-->
-<Button
-    android:id="@+id/submit_button"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="40dp"
-    android:layout_marginTop="10dp"
-    android:layout_marginEnd="40dp"
-    android:onClick="scan"
-    android:text="@string/Scan" />
+    <!--sample button to submit entered data inside from edit text-->
+    <Button
+        android:id="@+id/submit_button"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="40dp"
+        android:onClick="scan"
+        android:text="@string/Scan" />
 
 
 </LinearLayout>

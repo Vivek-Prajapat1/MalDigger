@@ -11,12 +11,6 @@
     tools:context=".Scan"
     tools:visibility="visible">
 
-    <RelativeLayout
-        android:id="@+id/button_parent"
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:layout_centerInParent="true"
-        android:gravity="center">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/button_card_parent"
@@ -24,35 +18,41 @@
             android:layout_height="60dp"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="25dp"
-            android:layout_marginRight="25dp"
-            app:cardCornerRadius="4dp"
-            app:cardElevation="20dp">
+            app:cardCornerRadius="7dp"
+            app:cardElevation="40dp">
 
             <RelativeLayout
                 android:id="@+id/button_click_parent"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="?attr/selectableItemBackground"
-                android:clickable="true"
+               android:clickable="true"
                 android:focusable="true">
 
                 <FrameLayout
                     android:id="@+id/button_accent_border"
-                    android:layout_width="10dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:background="#3EAA56" />
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginStart="80dp"
+                    android:layout_marginLeft="80dp"
+                    android:layout_marginEnd="311dp"
+                    android:layout_marginRight="311dp"
+                    android:background="#720968" />
 
                 <TextView
                     android:id="@+id/toast_text"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:background="#FFFF8D"
+                    android:background="#DADA11"
                     android:ellipsize="end"
                     android:fontFamily="monospace"
                     android:gravity="center"
                     android:lines="1"
-                    android:text="This is a custom Toast"
+                    android:text="Good To Go"
                     android:textColor="#131313"
                     android:textSize="25sp"
                     android:textStyle="bold"
@@ -60,6 +60,5 @@
             </RelativeLayout>
 
         </androidx.cardview.widget.CardView>
-    </RelativeLayout>
 
 </RelativeLayout>

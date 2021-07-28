@@ -2,7 +2,6 @@ package com.example.maldigger
 
 import android.Manifest
 import android.app.*
-import android.app.Service.START_STICKY
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -99,12 +98,12 @@ open class MainActivity : AppCompatActivity() {
         val p: Pattern =
             Pattern.compile("(@)?(href=')?(HREF=')?(HREF=\")?(href=\")?(http://)?[a-zA-Z_0-9\\-]+(\\.\\w[a-zA-Z_0-9\\-]+)+(/[#&\\n\\-=?\\+\\%/\\.\\w]+)?")
         try {
-            if(p.matcher(url).matches()) {
+            if (p.matcher(url).matches()) {
                 post(url)
-            }
-            else
+            } else {
                 makeText(this, "Invalid url", LENGTH_LONG).show()
             }
+        }
         catch (e: IOException) {
             Log.d("error", " $e")
         }
