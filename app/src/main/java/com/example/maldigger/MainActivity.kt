@@ -33,7 +33,6 @@ open class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         scanMsg()
-        ReadMsg()
     }
 
     fun scanMsg(){
@@ -89,7 +88,7 @@ open class MainActivity : AppCompatActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-     fun scan(view:View?) {
+    fun scan(view:View?) {
        // val intent = Intent(this, Scan::class.java)
         val editText = findViewById<View>(R.id.editText) as EditText
         val url = editText.text.toString()
@@ -197,7 +196,6 @@ open class MainActivity : AppCompatActivity() {
     }
 
 
-
 /*
     override fun onDestroy() {
         super.onDestroy()
@@ -208,8 +206,8 @@ open class MainActivity : AppCompatActivity() {
         startActivity(intent)
     }*/
 
-
 }  //end of main class
+
 
 open class ReadMsg: Service(){
 
