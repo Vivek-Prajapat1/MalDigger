@@ -29,6 +29,8 @@ import java.util.regex.Pattern.*
 
 open class MainActivity : AppCompatActivity() {
 
+    val context :Context = this
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,9 +46,6 @@ open class MainActivity : AppCompatActivity() {
     private fun askPermissions(){
 
         try {
-            //  scanMsg()
-
-            var context:Context = this
 
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(context, Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED ||
@@ -65,7 +64,7 @@ open class MainActivity : AppCompatActivity() {
         }
         catch(e: Exception)
         {
-            makeText(this,"error in MainClass", LENGTH_LONG).show()
+            makeText(context,"error in MainClass", LENGTH_LONG).show()
             Log.d("Error ","error in MainClass $e")
         }
 
@@ -84,7 +83,7 @@ open class MainActivity : AppCompatActivity() {
             val reqCols = arrayOf("_id", "address", "body")
             val cursor = contentResolver.query(inboxURI, reqCols, null, null, null)
             cursor?.moveToFirst()
-            var StringVal = cursor?.getString(2)
+            val StringVal = cursor?.getString(2)
             val StringVal1 = StringVal?.split(" ","-")?.toTypedArray()
 
             val p = compile("(@)?(href=')?(HREF=')?(HREF=\")?(href=\")?(http://)?[a-zA-Z_0-9\\-]+(\\.\\w[a-zA-Z_0-9\\-]+)+(/[#&\\n\\-=?+%/.\\w]+)?")
@@ -93,7 +92,7 @@ open class MainActivity : AppCompatActivity() {
                 for (i in StringVal1.indices){
 
                 if (p.matcher(StringVal1[i]).matches()) {
-                    makeText(this, "AutoScanned URL from SMS ", LENGTH_LONG).show()
+                    makeText(context, "AutoScanned URL from SMS ", LENGTH_LONG).show()
                     editText.setText(StringVal1[i])
                     flag++
                     break
@@ -102,7 +101,7 @@ open class MainActivity : AppCompatActivity() {
 
             if(flag==0) {
                 //sendNotification()
-                makeText(this, " NO URL in SMS ", LENGTH_LONG).show()
+                makeText(context, " NO URL in SMS ", LENGTH_LONG).show()
             }
 
             /*
@@ -114,7 +113,7 @@ open class MainActivity : AppCompatActivity() {
         }
         catch (e: Exception){
                 Log.d("Error ","in ScanMsg()  $e ")
-                makeText(this, "Error in ScanMsg() $e", LENGTH_LONG).show()
+                makeText(context, "Error in ScanMsg() $e", LENGTH_LONG).show()
         }
     }
 
@@ -130,9 +129,14 @@ open class MainActivity : AppCompatActivity() {
             compile("(@)?(href=')?(HREF=')?(HREF=\")?(href=\")?(http://)?[a-zA-Z_0-9\\-]+(\\.\\w[a-zA-Z_0-9\\-]+)+(/[#&\\n\\-=?+%/.\\w]+)?")
         try {
             if (p.matcher(url).matches()) {
-                postURL(url)
+                val malicious = postURL(context,url)
+                if (malicious<10)
+                    Toast(context).showCustomToast("Good To Go!!!",this)
+                else
+                    Toast(context).showCustomToast("Suspicious!!!",this)
+
             } else {
-                makeText(this, "Invalid url", LENGTH_LONG).show()
+                makeText(context, "Invalid url", LENGTH_LONG).show()
             }
         }
         catch (e: IOException) {
@@ -143,16 +147,18 @@ open class MainActivity : AppCompatActivity() {
 
 
     //function for sending the extracted URL to the server
+    @RequiresApi(Build.VERSION_CODES.O)
     @Throws(IOException::class)
-    private fun postURL(scan_url: String) {
+    fun postURL(context: Context, urlToBeScanned: String):Int {
 
         val gfgPolicy = ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(gfgPolicy)
-        val body = MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("url", scan_url).build()
+        val body = MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("url", urlToBeScanned).build()
         val request = Request.Builder().url("https://www.virustotal.com/api/v3/urls").post(body).addHeader("x-apikey", "2e50561b4a38bc74e24303a15f4c4afb404d4a5252470225a4021994806042cb").build()
         val client = OkHttpClient()
 
         val call = client.newCall(request)
+        var result = 0
         try {
             val response = call.execute()
             if (response.isSuccessful) {
@@ -162,7 +168,7 @@ open class MainActivity : AppCompatActivity() {
                 var id = data.getString("id")
                 id = id.split("-").toTypedArray()[1]
                 Log.i("URL Submitted", "ID generated:  $id")
-                getData(id)
+                result = getData(context,id)
             }
             response.close()
 
@@ -171,16 +177,20 @@ open class MainActivity : AppCompatActivity() {
             Log.i ( "Error ", "in post() :  $e")
 
         }
+
+        return result
     }
 
 
     //function fot getting the data from the server
+    @RequiresApi(Build.VERSION_CODES.O)
     @Throws(IOException::class)
-    private fun getData(id:String){
+    fun getData(context:Context,id:String): Int {
 
         val request = Request.Builder().url("https://www.virustotal.com/api/v3/urls/" + id ).get().addHeader("x-apikey", "2e50561b4a38bc74e24303a15f4c4afb404d4a5252470225a4021994806042cb").build()
         val client = OkHttpClient()
         val call = client.newCall(request)
+        var malicious = 0
         try {
             val response = call.execute()
             if (response.isSuccessful) {
@@ -190,15 +200,10 @@ open class MainActivity : AppCompatActivity() {
                 val attributes = data.getJSONObject("attributes")
                 val last_analysis_stats = attributes.getJSONObject("last_analysis_stats")
                 val harmless = last_analysis_stats.getInt("harmless")
-                val malicious = last_analysis_stats.getInt("malicious")
+                    malicious = last_analysis_stats.getInt("malicious")
                 val suspicious = last_analysis_stats.getInt("suspicious")
                 Log.i("Successful Scan ", " harmless count: $harmless")
 
-                if (malicious<10)
-                    Toast(this).showCustomToast("Good To Go!!!", this)
-
-                else
-                    Toast(this).showCustomToast("Suspicious!!", this)
             }
             response.close()
         }
@@ -206,11 +211,11 @@ open class MainActivity : AppCompatActivity() {
             Log.i ( "Error ", "in scan() :  $e")
 
         }
-
+        return malicious
     }
 
 
-    fun Toast.showCustomToast(message: String, activity: Activity) {
+    fun Toast.showCustomToast(message: String,activity:Activity) {
         val layout = activity.layoutInflater.inflate(
             R.layout.activity_scan,
             activity.findViewById(R.id.toast_container)

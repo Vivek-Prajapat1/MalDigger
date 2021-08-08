@@ -37,7 +37,7 @@ class Notification : Activity(){
 
 
     //function to send the notification when the SMS arrives
-    fun sendNotification(context: Context, msgBody: StringBuilder){
+    fun sendNotification(context: Context, msgBody: String){
 
         val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

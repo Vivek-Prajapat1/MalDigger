@@ -52,11 +52,12 @@ class MySmsReceiver : BroadcastReceiver() {
                     if (p.matcher(url[i]).matches()) {
 
                         //creating and sending notifications
-
-                        Notification().createNotification(context)
-                        Notification().sendNotification(context,msgBody)
-
-                        Toast.makeText(context, " ", Toast.LENGTH_LONG).show()
+                        val malicious = MainActivity().postURL(context,url[i])
+                        if (malicious<10) {
+                            Notification().createNotification(context)
+                            Notification().sendNotification(context,url[i])
+                        }
+                        Toast.makeText(context, url[i], Toast.LENGTH_LONG).show()
                         Log.d("BroadcastReceiver", url[i])
                         break
 
