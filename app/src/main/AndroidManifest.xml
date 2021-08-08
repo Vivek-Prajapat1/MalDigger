@@ -3,8 +3,10 @@
     package="com.example.maldigger">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_SMS" />
-
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.RECEIVE_MMS" />
+    <uses-permission android:name="android.permission.RECEIVE_WAP_PUSH" />
 
     <application
         android:allowBackup="true"
@@ -13,18 +15,29 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MalDigger">
-        <activity android:name=".Scan"></activity>
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".Scan" />
 
-        <service android:name=".ReadMsg"
+
+        <receiver
+            android:name=".MySmsReceiver"
+            android:parentActivityName=".MainActivity"
             android:enabled="true"
             android:exported="true"
-            android:stopWithTask="false" />
+            android:permission="android.permission.BROADCAST_WAP_PUSH">
+            android:permission="android.permission.BROADCAST_SMS">
+            <intent-filter>
+                <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
+                <action android:name="android.provider.Telephony.WAP_PUSH_DELIVER" />
+            </intent-filter>
+        </receiver>
+
 
     </application>
 
