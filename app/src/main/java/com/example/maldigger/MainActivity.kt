@@ -102,7 +102,7 @@ open class MainActivity : AppCompatActivity() {
 
             if(flag==0) {
                 //sendNotification()
-                makeText(this, " NO URL in SMS $StringVal", LENGTH_LONG).show()
+                makeText(this, " NO URL in SMS ", LENGTH_LONG).show()
             }
 
             /*

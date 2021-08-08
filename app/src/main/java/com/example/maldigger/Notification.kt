@@ -18,7 +18,7 @@ class Notification : Activity(){
 
     //this function is to create the notification
     @RequiresApi(Build.VERSION_CODES.O)
-    public fun createNotification(context:Context){
+    fun createNotification(context:Context){
         if (Build.VERSION_CODES.O <= Build.VERSION.SDK_INT) {
             val name = "Notification Title"
             val descriptionText = "Notification Description"
@@ -37,7 +37,7 @@ class Notification : Activity(){
 
 
     //function to send the notification when the SMS arrives
-    public fun sendNotification(context: Context, msgBody: StringBuilder){
+    fun sendNotification(context: Context, msgBody: StringBuilder){
 
         val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
