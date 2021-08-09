@@ -154,7 +154,7 @@ open class MainActivity : AppCompatActivity() {
         val gfgPolicy = ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(gfgPolicy)
         val body = MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("url", urlToBeScanned).build()
-        val request = Request.Builder().url("https://www.virustotal.com/api/v3/urls").post(body).addHeader("x-apikey", "2e50561b4a38bc74e24303a15f4c4afb404d4a5252470225a4021994806042cb").build()
+        val request = Request.Builder().url("https://www.virustotal.com/api/v3/urls").post(body).addHeader("x-apikey", "your API key here").build()
         val client = OkHttpClient()
 
         val call = client.newCall(request)
@@ -187,7 +187,7 @@ open class MainActivity : AppCompatActivity() {
     @Throws(IOException::class)
     fun getData(context:Context,id:String): Int {
 
-        val request = Request.Builder().url("https://www.virustotal.com/api/v3/urls/" + id ).get().addHeader("x-apikey", "2e50561b4a38bc74e24303a15f4c4afb404d4a5252470225a4021994806042cb").build()
+        val request = Request.Builder().url("https://www.virustotal.com/api/v3/urls/" + id ).get().addHeader("x-apikey", "your API key here").build()
         val client = OkHttpClient()
         val call = client.newCall(request)
         var malicious = 0
