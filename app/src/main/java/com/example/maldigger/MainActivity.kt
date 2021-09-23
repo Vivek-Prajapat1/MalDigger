@@ -30,6 +30,7 @@ import java.util.regex.Pattern.*
 open class MainActivity : AppCompatActivity() {
 
     val context :Context = this
+    private val key = "2e50561b4a38bc74e24303a15f4c4afb404d4a5252470225a4021994806042cb"
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,6 +40,10 @@ open class MainActivity : AppCompatActivity() {
         askPermissions()
         extractURLfromSMS()
 
+    }
+
+    fun getKey():String{
+        return key
     }
 
 
