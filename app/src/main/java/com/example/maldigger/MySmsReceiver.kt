@@ -52,10 +52,10 @@ class MySmsReceiver : BroadcastReceiver() {
                     if (p.matcher(url[i]).matches()) {
 
                         //creating and sending notifications
-                        val malicious = MainActivity().postURL(context,url[i])
+                        val malicious = CallAPI().getUrlData(context,CallAPI().postURL(context,url[i]))
                         if (malicious<10) {
-                            Notification().createNotification(context)
-                            Notification().sendNotification(context,url[i])
+                           // Notification().createNotification(context)
+                           // Notification().sendNotification(context,url[i])
                         }
                         Toast.makeText(context, url[i], Toast.LENGTH_LONG).show()
                         Log.d("BroadcastReceiver", url[i])

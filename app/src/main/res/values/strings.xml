@@ -2,5 +2,7 @@
     <string name="app_name">MalDigger</string>
     <string name="Scan">Scan</string>
     <string name="button_clicked">button clicked</string>
+    <string name="ChooseFile">Choose File</string>
+
     <string name="name">Enter URL</string>
 </resources>

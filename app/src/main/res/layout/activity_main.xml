@@ -45,5 +45,15 @@
         android:onClick="callAPI"
         android:text="@string/Scan" />
 
+    <Button
+    android:id="@+id/chooseFile_button"
+    android:layout_width="match_parent"
+    android:layout_height="55dp"
+    android:layout_marginStart="40dp"
+    android:layout_marginTop="20dp"
+    android:layout_marginEnd="40dp"
+    android:onClick="filePicker"
+    android:text="@string/ChooseFile" />
+
 
 </LinearLayout>
