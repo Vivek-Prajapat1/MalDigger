@@ -1,59 +1,61 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".MainActivity"
     tools:ignore="HardcodedText">
-
-    <!--this is the outlined layout box for the edit text-->
-    <!--this layout must be used to reposition or change the
-    height and width of the edit text-->
-    <!--to get the outlined edit text the style attribute as
-    following must be invoked-->
-
+    <!-- this is the outlined layout box for the edit text -->
+    <!-- this layout must be used to reposition or change the
+        height and width of the edit text -->
+    <!-- to get the outlined edit text the style attribute as
+        following must be invoked -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/filledTextField"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
-        android:layout_height="80dp"
+        android:layout_height="75dp"
         android:layout_marginStart="40dp"
         android:layout_marginTop="150dp"
         android:layout_marginEnd="40dp"
+        app:boxStrokeColor="#107FD6"
+        app:boxStrokeWidth="3dp"
+        app:counterEnabled="true"
+        app:counterMaxLength="100"
         app:endIconMode="clear_text"
         app:errorEnabled="true">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/editText"
             android:layout_width="match_parent"
-            android:layout_height="75dp"
+            android:layout_height="match_parent"
             android:hint="Enter URL"
             android:marqueeRepeatLimit="marquee_forever" />
-
     </com.google.android.material.textfield.TextInputLayout>
-
-    <!--sample button to submit entered data inside from edit text-->
+    <!-- sample button to submit entered data inside from edit text -->
     <Button
         android:id="@+id/submit_button"
-        android:layout_width="match_parent"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_width="150dp"
         android:layout_height="55dp"
+        android:layout_gravity="center"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="40dp"
         android:onClick="callAPI"
-        android:text="@string/Scan" />
+        android:text="@string/Scan"
+        tools:ignore="UsingOnClickInXml"></Button>
 
     <Button
-    android:id="@+id/chooseFile_button"
-    android:layout_width="match_parent"
-    android:layout_height="55dp"
-    android:layout_marginStart="40dp"
-    android:layout_marginTop="20dp"
-    android:layout_marginEnd="40dp"
-    android:onClick="filePicker"
-    android:text="@string/ChooseFile" />
-
-
+        android:id="@+id/chooseFile_button"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_width="150dp"
+        android:layout_height="55dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="40dp"
+        android:text="@string/ChooseFile" />
+    <!-- android:onClick="filePicker" -->
 </LinearLayout>
