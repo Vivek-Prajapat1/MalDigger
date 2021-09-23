@@ -3,7 +3,6 @@ package com.example.maldigger
 import android.Manifest
 import android.app.*
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.*
@@ -20,21 +19,17 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import okhttp3.Call
-//import me.rosuh.filepicker.config.FilePickerManager
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
 import java.io.IOException
-import java.util.regex.Pattern
 import java.util.regex.Pattern.*
 
 
-class MainActivity : AppCompatActivity() {
+open class MainActivity : AppCompatActivity() {
 
-    private val context :Context = this
-    private val key = "2e50561b4a38bc74e24303a15f4c4afb404d4a5252470225a4021994806042cb"
+    val context :Context = this
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,74 +37,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         askPermissions()
-       // extractURLfromSMS()
-
-    }
-
-    //function to get the key
-    fun getKey():String{
-        return key
-    }
-
-
-    //function to call the API of  VirusTotal
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun callAPI(view: View?){
-        // val intent = Intent(this, Scan::class.java)
-        val editText = findViewById<View>(R.id.editText) as EditText
-        val url = editText.text.toString()
-        //startActivity(intent)
-
-        val p =
-            Pattern.compile("(@)?(href=')?(HREF=')?(HREF=\")?(href=\")?(http://)?[a-zA-Z_0-9\\-]+(\\.\\w[a-zA-Z_0-9\\-]+)+(/[#&\\n\\-=?+%/.\\w]+)?")
-        try {
-            if (p.matcher(url).matches()) {
-                val malicious = CallAPI().getUrlData(context,CallAPI().postURL(context,url))
-                if (malicious< 10)
-                    Toast(context).showCustomToast("Good To Go!!!",this)
-                else
-                    Toast(context).showCustomToast("Suspicious!!!",this)
-
-            } else {
-                Toast.makeText(context, "Invalid url", Toast.LENGTH_LONG).show()
-            }
-        }
-        catch (e: IOException) {
-            Log.d("error", " $e")
-        }
-    }
-
-
-    val requestCode = 1
-    @RequiresApi(Build.VERSION_CODES.O)
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-       super.onActivityResult(requestCode, resultCode, data)
-        var id=""
-        var malicious=0
-        if(requestCode == requestCode && resultCode == Activity.RESULT_OK )
-        {
-            if (data==null)
-                return
-            val uri = data.data?.path
-            Log.d("FilePicker1 : ","$uri")
-            if (uri != null) {
-                id = CallAPI().postFile(context,uri)
-                //malicious = CallAPI().getFileData(context,id)
-                Log.d("FilePicker2 : ","$uri  $id  $malicious")
-            }
-
-            if (malicious>2)
-                Toast(context).showCustomToast("Good To Go!!!",this)
-            else
-                Toast(context).showCustomToast("Suspicious!!!",this)
-        }
-    }
-
-
-    //function to choose files from the file manager
-    fun filePicker(view:View?){
-        val intent = Intent(Intent.ACTION_GET_CONTENT).apply { type = "*/*" }
-            startActivityForResult(intent,requestCode)
+        extractURLfromSMS()
 
     }
 
@@ -122,17 +50,14 @@ class MainActivity : AppCompatActivity() {
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(context, Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(context, Manifest.permission.RECEIVE_MMS) != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(context, Manifest.permission.RECEIVE_WAP_PUSH) != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED  ) {
-
+                ContextCompat.checkSelfPermission(context, Manifest.permission.RECEIVE_WAP_PUSH) != PackageManager.PERMISSION_GRANTED  ) {
                 val MY_PERMISSIONS_REQUEST_SMS = 30
                 val activity = this
                 ActivityCompat.requestPermissions(activity,
                     arrayOf(Manifest.permission.READ_SMS,
                         Manifest.permission.RECEIVE_SMS,
                         Manifest.permission.RECEIVE_MMS,
-                        Manifest.permission.RECEIVE_WAP_PUSH,
-                        Manifest.permission.READ_EXTERNAL_STORAGE, ),
+                        Manifest.permission.RECEIVE_WAP_PUSH),
                     MY_PERMISSIONS_REQUEST_SMS)
 
             }//end of if block
@@ -193,6 +118,103 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun callAPI(view:View?){
+       // val intent = Intent(this, Scan::class.java)
+        val editText = findViewById<View>(R.id.editText) as EditText
+        val url = editText.text.toString()
+        //startActivity(intent)
+
+        val p =
+            compile("(@)?(href=')?(HREF=')?(HREF=\")?(href=\")?(http://)?[a-zA-Z_0-9\\-]+(\\.\\w[a-zA-Z_0-9\\-]+)+(/[#&\\n\\-=?+%/.\\w]+)?")
+        try {
+            if (p.matcher(url).matches()) {
+                val malicious = postURL(context,url)
+                if (malicious<10)
+                    Toast(context).showCustomToast("Good To Go!!!",this)
+                else
+                    Toast(context).showCustomToast("Suspicious!!!",this)
+
+            } else {
+                makeText(context, "Invalid url", LENGTH_LONG).show()
+            }
+        }
+        catch (e: IOException) {
+            Log.d("error", " $e")
+        }
+
+    }
+
+
+    //function for sending the extracted URL to the server
+    @RequiresApi(Build.VERSION_CODES.O)
+    @Throws(IOException::class)
+    fun postURL(context: Context, urlToBeScanned: String):Int {
+
+        val gfgPolicy = ThreadPolicy.Builder().permitAll().build()
+        StrictMode.setThreadPolicy(gfgPolicy)
+        val body = MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("url", urlToBeScanned).build()
+        val request = Request.Builder().url("https://www.virustotal.com/api/v3/urls").post(body).addHeader("x-apikey", "2e50561b4a38bc74e24303a15f4c4afb404d4a5252470225a4021994806042cb").build()
+        val client = OkHttpClient()
+
+        val call = client.newCall(request)
+        var result = 0
+        try {
+            val response = call.execute()
+            if (response.isSuccessful) {
+                val body = response.body!!.string()
+                val json = JSONObject(body)
+                val data = json.getJSONObject("data")
+                var id = data.getString("id")
+                id = id.split("-").toTypedArray()[1]
+                Log.i("URL Submitted", "ID generated:  $id")
+                result = getData(context,id)
+            }
+            response.close()
+
+        }
+        catch (e:Exception){
+            Log.i ( "Error ", "in post() :  $e")
+
+        }
+
+        return result
+    }
+
+
+    //function fot getting the data from the server
+    @RequiresApi(Build.VERSION_CODES.O)
+    @Throws(IOException::class)
+    fun getData(context:Context,id:String): Int {
+
+        val request = Request.Builder().url("https://www.virustotal.com/api/v3/urls/" + id ).get().addHeader("x-apikey", "2e50561b4a38bc74e24303a15f4c4afb404d4a5252470225a4021994806042cb").build()
+        val client = OkHttpClient()
+        val call = client.newCall(request)
+        var malicious = 0
+        try {
+            val response = call.execute()
+            if (response.isSuccessful) {
+                val body = response.body!!.string()
+                val json = JSONObject(body)
+                val data = json.getJSONObject("data")
+                val attributes = data.getJSONObject("attributes")
+                val last_analysis_stats = attributes.getJSONObject("last_analysis_stats")
+                val harmless = last_analysis_stats.getInt("harmless")
+                    malicious = last_analysis_stats.getInt("malicious")
+                val suspicious = last_analysis_stats.getInt("suspicious")
+                Log.i("Successful Scan ", " harmless count: $harmless")
+
+            }
+            response.close()
+        }
+        catch (e:Exception){
+            Log.i ( "Error ", "in scan() :  $e")
+
+        }
+        return malicious
+    }
+
+
     fun Toast.showCustomToast(message: String,activity:Activity) {
         val layout = activity.layoutInflater.inflate(
             R.layout.activity_scan,
@@ -214,4 +236,13 @@ class MainActivity : AppCompatActivity() {
 
 
 }///end of MainActivity class
+
+
+
+
+
+
+
+
+
 
