@@ -11,6 +11,19 @@
         height and width of the edit text -->
     <!-- to get the outlined edit text the style attribute as
         following must be invoked -->
+    <!--
+    <androidx.appcompat.widget.AppCompatTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center"
+        android:text="MalDigger"
+        android:textSize="32sp"
+        >
+
+    </androidx.appcompat.widget.AppCompatTextView>
+-->
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/filledTextField"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -45,7 +58,8 @@
         android:layout_marginEnd="40dp"
         android:onClick="callAPI"
         android:text="@string/Scan"
-        tools:ignore="UsingOnClickInXml"></Button>
+        tools:ignore="UsingOnClickInXml">
+    </Button>
 
     <Button
         android:id="@+id/chooseFile_button"
@@ -58,4 +72,16 @@
         android:layout_marginEnd="40dp"
         android:text="@string/ChooseFile" />
     <!-- android:onClick="filePicker" -->
+
+    <Button
+        android:id="@+id/scan_Qr_Button"
+        style="?attr/materialButtonOutlinedStyle"
+        android:layout_width="150dp"
+        android:layout_height="55dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="40dp"
+        android:text="Scan QR Code" />
+
 </LinearLayout>
