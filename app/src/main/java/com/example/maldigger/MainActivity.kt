@@ -46,7 +46,6 @@ open class MainActivity : AppCompatActivity() {
         return key
     }
 
-
     //function for asking permissions to Read SMS//
     private fun askPermissions(){
 
