@@ -30,6 +30,7 @@ import java.util.regex.Pattern.*
 open class MainActivity : AppCompatActivity() {
 
     val context :Context = this
+    private val PERMISSION_REQUEST_CAMERA = 0
     private val key = "2e50561b4a38bc74e24303a15f4c4afb404d4a5252470225a4021994806042cb"
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -39,6 +40,8 @@ open class MainActivity : AppCompatActivity() {
 
         askPermissions()
         extractURLfromSMS()
+        // Camera Code
+        requestCamera()
 
     }
 
@@ -55,7 +58,8 @@ open class MainActivity : AppCompatActivity() {
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(context, Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(context, Manifest.permission.RECEIVE_MMS) != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(context, Manifest.permission.RECEIVE_WAP_PUSH) != PackageManager.PERMISSION_GRANTED  ) {
+                ContextCompat.checkSelfPermission(context, Manifest.permission.RECEIVE_WAP_PUSH) != PackageManager.PERMISSION_GRANTED)
+            {
                 val MY_PERMISSIONS_REQUEST_SMS = 30
                 val activity = this
                 ActivityCompat.requestPermissions(activity,
@@ -75,6 +79,43 @@ open class MainActivity : AppCompatActivity() {
 
     }//end of permissions method
 
+    //Function for Requesting Camera // Camera Code
+    open fun requestCamera() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA ) == PackageManager.PERMISSION_GRANTED)
+        {
+            startCamera()
+        }
+        else
+        {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA ))
+            {
+                ActivityCompat.requestPermissions(this@MainActivity, arrayOf(Manifest.permission.CAMERA),PERMISSION_REQUEST_CAMERA)
+            }
+            else
+            {
+                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), PERMISSION_REQUEST_CAMERA)
+            }
+        }
+    }//end of request camera function //Camera Code
+
+    //Camera Code
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String?>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == PERMISSION_REQUEST_CAMERA) {
+            if (grantResults.size == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startCamera()
+            } else {
+                makeText(this, "Camera Permission Denied", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+//Camera Code
+    //Method for Starting Camera
+    private fun startCamera() {
+        TODO("Not yet implemented")
+    }
+    //end of start camera method //Camera Code Till Now
 
     //function for searching the latest SMS and extracting URl from it.
     @RequiresApi(Build.VERSION_CODES.O)
