@@ -3,6 +3,7 @@ package com.example.maldigger
 import android.Manifest
 import android.app.*
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.*
@@ -289,6 +290,39 @@ open class MainActivity : AppCompatActivity() {
         }
     }
 
+
+
+    val requestCode = 1
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        var id=""
+        var malicious=0
+        if(requestCode == requestCode && resultCode == Activity.RESULT_OK )
+        {
+            if (data==null)
+                return
+            val uri = data.data?.path
+            Log.d("FilePicker1 : ","$uri")
+            if (uri != null) {
+                id = CallAPI().postFile(context,uri)
+                malicious = CallAPI().getFileData(context,id)
+                Log.d("FilePicker2 : ","$uri  $id  $malicious")
+            }
+
+            if (malicious<5)
+                Toast(context).showCustomToast("Good To Go!!!",this)
+            else
+                Toast(context).showCustomToast("Suspicious!!!",this)
+        }
+    }
+
+    //function to choose files from the file manager
+    fun filePicker(view:View?){
+        val intent = Intent(Intent.ACTION_GET_CONTENT).apply { type = "*/*" }
+        startActivityForResult(intent,requestCode)
+
+    }
 
 }///end of MainActivity class
 

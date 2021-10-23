@@ -70,7 +70,9 @@
         android:layout_marginStart="40dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="40dp"
-        android:text="@string/ChooseFile" />
+        android:text="@string/ChooseFile"
+        android:onClick="filePicker"
+        />
     <!-- android:onClick="filePicker" -->
 
     <Button
