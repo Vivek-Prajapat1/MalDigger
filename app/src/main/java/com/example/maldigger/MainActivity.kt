@@ -26,7 +26,6 @@ import org.json.JSONObject
 import java.io.IOException
 import java.util.regex.Pattern.*
 
-
 open class MainActivity : AppCompatActivity() {
 
     val context :Context = this
@@ -41,13 +40,15 @@ open class MainActivity : AppCompatActivity() {
         askPermissions()
         extractURLfromSMS()
         // Camera Code
-        requestCamera()
+        //requestCamera()
 
     }
+
 
     fun getKey():String{
         return key
     }
+
 
     //function for asking permissions to Read SMS//
     private fun askPermissions(){
@@ -78,11 +79,12 @@ open class MainActivity : AppCompatActivity() {
 
     }//end of permissions method
 
+
     //Function for Requesting Camera // Camera Code
     open fun requestCamera() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA ) == PackageManager.PERMISSION_GRANTED)
         {
-            startCamera()
+            //startCamera()
         }
         else
         {
@@ -97,17 +99,19 @@ open class MainActivity : AppCompatActivity() {
         }
     }//end of request camera function //Camera Code
 
+
     //Camera Code
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String?>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == PERMISSION_REQUEST_CAMERA) {
             if (grantResults.size == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                startCamera()
+                //startCamera()
             } else {
                 makeText(this, "Camera Permission Denied", Toast.LENGTH_SHORT).show()
             }
         }
     }
+
 
 //Camera Code
     //Method for Starting Camera
@@ -169,16 +173,23 @@ open class MainActivity : AppCompatActivity() {
         val editText = findViewById<View>(R.id.editText) as EditText
         val url = editText.text.toString()
         //startActivity(intent)
-
         val p =
             compile("(@)?(href=')?(HREF=')?(HREF=\")?(href=\")?(http://)?[a-zA-Z_0-9\\-]+(\\.\\w[a-zA-Z_0-9\\-]+)+(/[#&\\n\\-=?+%/.\\w]+)?")
         try {
+            //if url is valid then it gets entered in the database
+
             if (p.matcher(url).matches()) {
+
+                //calling dbhandler and inserting url
+                    Log.d("MainActivity ","Before DBhandler");
+                val db = DBHandler(this,null)
+                db.addName(url)
+
                 val malicious = postURL(context,url)
                 if (malicious<10)
-                    Toast(context).showCustomToast("Good To Go!!!",this)
+                Toast(context).showCustomToast("Good To Go!!!",this)
                 else
-                    Toast(context).showCustomToast("Suspicious!!!",this)
+                Toast(context).showCustomToast("Suspicious!!!",this)
 
             } else {
                 makeText(context, "Invalid url", LENGTH_LONG).show()
@@ -187,7 +198,6 @@ open class MainActivity : AppCompatActivity() {
         catch (e: IOException) {
             Log.d("error", " $e")
         }
-
     }
 
 
