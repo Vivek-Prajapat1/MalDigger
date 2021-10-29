@@ -22,7 +22,7 @@ class DBHandler(context: Context, factory: SQLiteDatabase.CursorFactory?) :
         // we are calling sqlite
         // method for executing our query
         db.execSQL(query)
-        Log.d("DBHandler ","table created")
+        Log.d("DBHandler ", "table created")
     }
 
     override fun onUpgrade(db: SQLiteDatabase, p1: Int, p2: Int) {
@@ -32,7 +32,7 @@ class DBHandler(context: Context, factory: SQLiteDatabase.CursorFactory?) :
     }
 
     // This method is for adding data in our database
-    fun addName(url : String){
+    fun addName(url: String) {
         val db = this.writableDatabase
 
         try {
@@ -50,10 +50,9 @@ class DBHandler(context: Context, factory: SQLiteDatabase.CursorFactory?) :
             // insert value in our database
             // all values are inserted into database
             db.insert(TABLE_NAME, null, values)
-            Log.d("DBHelper ","insertion successfull")
-        }
-        catch(e:Exception){
-            Log.d("DBHelper ","unsuccessfull $e")
+            Log.d("DBHelper ", "insertion successfull")
+        } catch (e: Exception) {
+            Log.d("DBHelper ", "unsuccessfull $e")
         }
         // at last we are
         // closing our database
@@ -76,7 +75,7 @@ class DBHandler(context: Context, factory: SQLiteDatabase.CursorFactory?) :
 
     }
 
-    companion object{
+    companion object {
         // here we have defined variables for our database
 
         // below is variable for database name

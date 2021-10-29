@@ -11,14 +11,14 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 
-class Notification : Activity(){
+class Notification : Activity() {
 
     private val channel_id = "channel_id"
-    private val notification  = 101
+    private val notification = 101
 
     //this function is to create the notification
     @RequiresApi(Build.VERSION_CODES.O)
-    fun createNotification(context:Context){
+    fun createNotification(context: Context) {
         if (Build.VERSION_CODES.O <= Build.VERSION.SDK_INT) {
             val name = "Notification Title"
             val descriptionText = "Notification Description"
@@ -37,14 +37,14 @@ class Notification : Activity(){
 
 
     //function to send the notification when the SMS arrives
-    fun sendNotification(context: Context, msgBody: String){
+    fun sendNotification(context: Context, msgBody: String) {
 
         val intent = Intent(context, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
         val pendingIntent: PendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
 
-        val builder : NotificationCompat.Builder = NotificationCompat.Builder(context, channel_id)
+        val builder: NotificationCompat.Builder = NotificationCompat.Builder(context, channel_id)
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setContentTitle("Latest URL scanned from SMS:  $msgBody")
             .setContentText("Tap for more info.")

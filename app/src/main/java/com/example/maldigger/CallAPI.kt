@@ -21,12 +21,14 @@ class CallAPI {
     //function for sending the extracted URL to the server
     @RequiresApi(Build.VERSION_CODES.O)
     @Throws(IOException::class)
-    fun postURL(urlToBeScanned: String):String {
+    fun postURL(urlToBeScanned: String): String {
 
         val gfgPolicy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(gfgPolicy)
-        val body = MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("url", urlToBeScanned).build()
-        val request = Request.Builder().url(urlForPostUrl).post(body).addHeader("x-apikey", MainActivity().getKey()).build()
+        val body = MultipartBody.Builder().setType(MultipartBody.FORM)
+            .addFormDataPart("url", urlToBeScanned).build()
+        val request = Request.Builder().url(urlForPostUrl).post(body)
+            .addHeader("x-apikey", MainActivity().getKey()).build()
         val client = OkHttpClient()
 
         val call = client.newCall(request)
@@ -44,9 +46,8 @@ class CallAPI {
             }
             response.close()
 
-        }
-        catch (e:Exception){
-            Log.i ( "Error ", "in post() :  $e")
+        } catch (e: Exception) {
+            Log.i("Error ", "in post() :  $e")
             response.close()
         }
 
@@ -61,7 +62,8 @@ class CallAPI {
 
         var malicious = 0
         try {
-            val request = Request.Builder().url(urlToGetUrlData + id ).get().addHeader("x-apikey", MainActivity().getKey()).build()
+            val request = Request.Builder().url(urlToGetUrlData + id).get()
+                .addHeader("x-apikey", MainActivity().getKey()).build()
             val client = OkHttpClient()
             val call = client.newCall(request)
             val response = call.execute()
@@ -78,9 +80,8 @@ class CallAPI {
                 Log.i("Successful Scan ", " harmless count: $harmless ")
             }
             response.close()
-        }
-        catch (e:Exception){
-            Log.i ( "Error ", "in scan() :  $e")
+        } catch (e: Exception) {
+            Log.i("Error ", "in scan() :  $e")
 
         }
         return malicious
@@ -90,14 +91,17 @@ class CallAPI {
     //function to send hash of file to virusTotal
     @RequiresApi(Build.VERSION_CODES.O)
     @Throws(IOException::class)
-    fun postFile(context: Context, uri :String): String {
+    fun postFile(context: Context, uri: String): String {
 
         var id = ""
         try {
             val gfgPolicy = StrictMode.ThreadPolicy.Builder().permitAll().build()
             StrictMode.setThreadPolicy(gfgPolicy)
-            val body = MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("url", uri).build()
-            val request = Request.Builder().url(urlForPostFile).post(body).addHeader("x-apikey", MainActivity().getKey()).build()
+            val body =
+                MultipartBody.Builder().setType(MultipartBody.FORM).addFormDataPart("url", uri)
+                    .build()
+            val request = Request.Builder().url(urlForPostFile).post(body)
+                .addHeader("x-apikey", MainActivity().getKey()).build()
             val client = OkHttpClient()
 
             val call = client.newCall(request)
@@ -110,13 +114,13 @@ class CallAPI {
                 id = data.getString("id")
                 id = id.split("-").toTypedArray()[1]
                 Log.d("File Submitted", "ID generated:  $id")
+            } else {
+                Log.d("nothing ", "happened")
             }
-            else{Log.d("nothing ","happened")}
             response.close()
 
-        }
-        catch (e:Exception){
-            Log.i ( "Error ", "in postFile() :  $e")
+        } catch (e: Exception) {
+            Log.i("Error ", "in postFile() :  $e")
         }
 
         return id
@@ -129,7 +133,8 @@ class CallAPI {
     @Throws(IOException::class)
     fun getFileData(context: Context, id: String): Int {
 
-        val request = Request.Builder().url(urlToGetFileData + id ).get().addHeader("x-apikey", MainActivity().getKey()).build()
+        val request = Request.Builder().url(urlToGetFileData + id).get()
+            .addHeader("x-apikey", MainActivity().getKey()).build()
         val client = OkHttpClient()
         val call = client.newCall(request)
         var malicious = 0
@@ -148,9 +153,8 @@ class CallAPI {
 
             }
             response.close()
-        }
-        catch (e:Exception){
-            Log.d ( "Error ", "in getFileData() :  $e")
+        } catch (e: Exception) {
+            Log.d("Error ", "in getFileData() :  $e")
         }
         return malicious
     }
