@@ -76,7 +76,7 @@
     <!-- android:onClick="filePicker" -->
 
     <Button
-        android:id="@+id/scan_Qr_Button"
+        android:id="@+id/scanQrBtn"
         style="?attr/materialButtonOutlinedStyle"
         android:layout_width="150dp"
         android:layout_height="55dp"
@@ -84,6 +84,28 @@
         android:layout_marginStart="40dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="40dp"
-        android:text="Scan QR Code" />
+        android:text="Scan QR Code"
+        />
 
+    <TextView
+        android:id="@+id/scanTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="15dp"
+        android:text="Scanned Links"
+        android:textSize="25sp"
+        android:textColor="@color/teal_200"
+        android:textStyle="italic"
+        />
+    <!-- Image button ka Kuch  Set Nahi ho raha hai Isisliye Chord diya
+    <ImageButton
+        android:id="@+id/scanQrImgBtn"
+        android:layout_width="135dp"
+        android:layout_height="135dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:background="@color/teal_700"
+        android:src="@drawable/qrcodeimgbtn"
+        />-->
 </LinearLayout>
