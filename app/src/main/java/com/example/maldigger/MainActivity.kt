@@ -9,14 +9,11 @@ import android.net.Uri
 import android.os.*
 import android.os.StrictMode.ThreadPolicy
 import android.util.Log
-import android.view.Gravity
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import android.widget.Toast.LENGTH_LONG
-import android.widget.Toast.makeText
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -28,6 +25,7 @@ import org.json.JSONObject
 import java.io.IOException
 import java.util.regex.Pattern.*
 import android.os.Bundle
+import android.widget.Toast.*
 
 
 open class MainActivity : AppCompatActivity() {
@@ -43,16 +41,17 @@ open class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        askPermissions()
+        extractUrlFromSms()
         scanTextView = findViewById<View>(R.id.scanTextView) as TextView
         scanQrBtn = findViewById<View>(R.id.scanQrBtn) as Button
 
         scanQrBtn!!.setOnClickListener {
+            makeText(context, "Scanning QR Code", LENGTH_SHORT).show()
             startActivity(Intent(applicationContext, ScannerView::class.java))
         }
 
-        askPermissions()
-        extractUrlFromSms()
+
     }
 
 
@@ -137,10 +136,9 @@ open class MainActivity : AppCompatActivity() {
                 makeText(context, " NO URL in SMS ", LENGTH_LONG).show()
             }
 
-            /*
             if (cursor != null)
-                Toast.makeText(this, "Success read sms ${stringVal1?.get(5)} ", Toast.LENGTH_LONG ).show()
-               */
+                makeText(this, "Success read sms ${stringVal1?.get(5)} ", LENGTH_LONG ).show()
+
 
             cursor?.close()
         }
@@ -171,9 +169,9 @@ open class MainActivity : AppCompatActivity() {
 
                 val malicious = postURL(url)
                 if (malicious<10)
-                Toast(context).showCustomToast("Good To Go!!!",this)
+                    showCustomToast("Good To Go!!!", this)
                 else
-                Toast(context).showCustomToast("Suspicious!!!",this)
+                    showCustomToast("Suspicious!!!", this)
 
             } else {
                 makeText(context, "Invalid url", LENGTH_LONG).show()
@@ -254,10 +252,9 @@ open class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun Toast.showCustomToast(message: String, activity:Activity) {
+    private fun showCustomToast(message: String, activity: Activity) {
         val layout = activity.layoutInflater.inflate(
-            R.layout.activity_scan,
-            activity.findViewById(R.id.toast_container)
+            R.layout.activity_scan, activity.findViewById(R.id.toast_container)
         )
 
         // set the text of the TextView of the message
@@ -265,12 +262,11 @@ open class MainActivity : AppCompatActivity() {
         message.also { textView.text = it }
 
         // use the application extension function
-        this.apply {
-            setGravity(Gravity.CENTER, 0, 40)
+      /*  this.apply { setGravity(Gravity.CENTER, 0, 40)
             duration = LENGTH_LONG
             view = layout
             show()
-        }
+        }*/
     }
 
 
@@ -294,9 +290,9 @@ open class MainActivity : AppCompatActivity() {
             }
 
             if (malicious<5)
-                Toast(context).showCustomToast("Good To Go!!!",this)
+                showCustomToast("Good To Go!!!", this)
             else
-                Toast(context).showCustomToast("Suspicious!!!",this)
+                showCustomToast("Suspicious!!!", this)
         }
     }
 

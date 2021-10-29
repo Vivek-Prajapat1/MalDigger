@@ -38,7 +38,9 @@ class ScannerView : AppCompatActivity(), ZXingScannerView.ResultHandler {
             }).check()
     }
     override fun handleResult(rawResult: Result?) {
-        main?.
+
+        var link: String = rawResult?.getText().toString()
+        main?.scanTextView?.setText(link)
         onBackPressed()
     }
 
