@@ -14,8 +14,8 @@ import java.util.regex.Pattern
 class MySmsReceiver : BroadcastReceiver() {
     private val SMS = "android.provider.Telephony.SMS_RECEIVED"
 
-     @RequiresApi(Build.VERSION_CODES.O)
-     override fun onReceive(context: Context, intent: Intent) {
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onReceive(context: Context, intent: Intent) {
         // This method is called when the BroadcastReceiver is receiving an Intent broadcast.
         Log.d("BroadcastReceiver", "onReceive")
 
@@ -41,32 +41,32 @@ class MySmsReceiver : BroadcastReceiver() {
 
             //Now Splitting the above msgBody to extract URL from it
 
-            val url = msgBody.split(" ","-").toTypedArray()
+            val url = msgBody.split(" ", "-").toTypedArray()
 
             //creating regex pattern to validate url..
 
             val p =
                 Pattern.compile("(@)?(href=')?(HREF=')?(HREF=\")?(href=\")?(http://)?[a-zA-Z_0-9\\-]+(\\.\\w[a-zA-Z_0-9\\-]+)+(/[#&\\n\\-=?+%/.\\w]+)?")
 
-                for (i in url.indices){
-                    if (p.matcher(url[i]).matches()) {
+            for (i in url.indices) {
+                if (p.matcher(url[i]).matches()) {
 
-                        //creating and sending notifications
-                        val malicious = CallAPI().getUrlData(CallAPI().postURL(url[i]))
-                        if (malicious<10) {
-                            Notification().createNotification(context)
-                            Notification().sendNotification(context,url[i])
-                        }
-                        Toast.makeText(context, url[i], Toast.LENGTH_LONG).show()
-                        Log.d("BroadcastReceiver", url[i])
-                        break
+                    //creating and sending notifications
+                    val malicious = CallAPI().getUrlData(CallAPI().postURL(url[i]))
+                    if (malicious < 10) {
+                        Notification().createNotification(context)
+                        Notification().sendNotification(context, url[i])
+                    }
+                    Toast.makeText(context, url[i], Toast.LENGTH_LONG).show()
+                    Log.d("BroadcastReceiver", url[i])
+                    break
 
-                    }//end of if block
-                }//end of for loop
+                }//end of if block
+            }//end of for loop
 
         }//end of if block
 
-     }//end of onReceive()
+    }//end of onReceive()
 
 }// end of class
 

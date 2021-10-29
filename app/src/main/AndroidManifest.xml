@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.maldigger">
 
+    <uses-feature android:name="android.hardware.camera2.any" />
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
@@ -10,7 +12,7 @@
     <uses-permission android:name="android.permission.RECEIVE_MMS" />
     <uses-permission android:name="android.permission.RECEIVE_WAP_PUSH" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.CAMERA" />
 
 
     <application
@@ -19,10 +21,11 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        tools:replace="android:allowBackup"
-        android:theme="@style/Theme.MalDigger">
+        android:theme="@style/Theme.MalDigger"
+        tools:replace="android:allowBackup">
 
-        <activity android:name=".MainActivity"
+        <activity
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,17 +33,17 @@
             </intent-filter>
         </activity>
         <activity android:name=".Scan" />
-        <activity android:name=".ScannerView"/>
+        <activity android:name=".ScannerView" />
 
 
         <receiver
             android:name=".MySmsReceiver"
-            android:parentActivityName=".MainActivity"
             android:enabled="true"
             android:exported="true"
+            android:parentActivityName=".MainActivity"
             android:permission="android.permission.BROADCAST_SMS">
             <intent-filter>
-                <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
                 <action android:name="android.provider.Telephony.WAP_PUSH_DELIVER" />
             </intent-filter>
         </receiver>
