@@ -4,16 +4,12 @@ import android.content.Context
 import android.os.Build
 import android.os.StrictMode
 import android.util.Log
-import android.view.View
-import android.widget.EditText
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONObject
 import java.io.IOException
-import java.util.regex.Pattern
 
 class CallAPI {
 
@@ -25,7 +21,7 @@ class CallAPI {
     //function for sending the extracted URL to the server
     @RequiresApi(Build.VERSION_CODES.O)
     @Throws(IOException::class)
-    fun postURL(context: Context, urlToBeScanned: String):String {
+    fun postURL(urlToBeScanned: String):String {
 
         val gfgPolicy = StrictMode.ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(gfgPolicy)
@@ -61,7 +57,7 @@ class CallAPI {
     //function fot getting the data from the server
     @RequiresApi(Build.VERSION_CODES.O)
     @Throws(IOException::class)
-    fun getUrlData(context: Context, id:String): Int {
+    fun getUrlData(id: String): Int {
 
         var malicious = 0
         try {
@@ -74,12 +70,12 @@ class CallAPI {
                 val json = JSONObject(body)
                 val data = json.getJSONObject("data")
                 val attributes = data.getJSONObject("attributes")
-                val last_analysis_stats = attributes.getJSONObject("last_analysis_stats")
-                val harmless = last_analysis_stats.getInt("harmless")
-                malicious = last_analysis_stats.getInt("malicious")
-                val suspicious = last_analysis_stats.getInt("suspicious")
-                Log.i("Successful Scan ", " harmless count: $harmless")
+                val last_Analysis_Stats = attributes.getJSONObject("last_analysis_stats")
+                val harmless = last_Analysis_Stats.getInt("harmless")
+                malicious = last_Analysis_Stats.getInt("malicious")
+                val suspicious = last_Analysis_Stats.getInt("suspicious")
 
+                Log.i("Successful Scan ", " harmless count: $harmless ")
             }
             response.close()
         }

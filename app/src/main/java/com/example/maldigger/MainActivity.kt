@@ -11,6 +11,7 @@ import android.os.StrictMode.ThreadPolicy
 import android.util.Log
 import android.view.Gravity
 import android.view.View
+import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
@@ -26,23 +27,32 @@ import okhttp3.Request
 import org.json.JSONObject
 import java.io.IOException
 import java.util.regex.Pattern.*
+import android.os.Bundle
+
 
 open class MainActivity : AppCompatActivity() {
 
     val context :Context = this
-    private val PERMISSION_REQUEST_CAMERA = 0
+    private val permissionRequestCamera = 0
     private val key = "2e50561b4a38bc74e24303a15f4c4afb404d4a5252470225a4021994806042cb"
+
+    var scanTextView: TextView? = null
+    private var scanQrBtn: Button? = null
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        askPermissions()
-        extractURLfromSMS()
-        // Camera Code
-        //requestCamera()
+        scanTextView = findViewById<View>(R.id.scanTextView) as TextView
+        scanQrBtn = findViewById<View>(R.id.scanQrBtn) as Button
 
+        scanQrBtn!!.setOnClickListener {
+            startActivity(Intent(applicationContext, ScannerView::class.java))
+        }
+
+        askPermissions()
+        extractUrlFromSms()
     }
 
 
@@ -61,14 +71,14 @@ open class MainActivity : AppCompatActivity() {
                 ContextCompat.checkSelfPermission(context, Manifest.permission.RECEIVE_MMS) != PackageManager.PERMISSION_GRANTED ||
                 ContextCompat.checkSelfPermission(context, Manifest.permission.RECEIVE_WAP_PUSH) != PackageManager.PERMISSION_GRANTED)
             {
-                val MY_PERMISSIONS_REQUEST_SMS = 30
+                val myPermissionRequestSms = 30
                 val activity = this
                 ActivityCompat.requestPermissions(activity,
                     arrayOf(Manifest.permission.READ_SMS,
                         Manifest.permission.RECEIVE_SMS,
                         Manifest.permission.RECEIVE_MMS,
                         Manifest.permission.RECEIVE_WAP_PUSH),
-                    MY_PERMISSIONS_REQUEST_SMS)
+                    myPermissionRequestSms)
 
             }//end of if block
         }
@@ -81,30 +91,10 @@ open class MainActivity : AppCompatActivity() {
     }//end of permissions method
 
 
-    //Function for Requesting Camera // Camera Code
-    open fun requestCamera() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA ) == PackageManager.PERMISSION_GRANTED)
-        {
-            //startCamera()
-        }
-        else
-        {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA ))
-            {
-                ActivityCompat.requestPermissions(this@MainActivity, arrayOf(Manifest.permission.CAMERA),PERMISSION_REQUEST_CAMERA)
-            }
-            else
-            {
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.CAMERA), PERMISSION_REQUEST_CAMERA)
-            }
-        }
-    }//end of request camera function //Camera Code
-
-
-    //Camera Code
+      //Camera Code
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String?>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == PERMISSION_REQUEST_CAMERA) {
+        if (requestCode == permissionRequestCamera) {
             if (grantResults.size == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 //startCamera()
             } else {
@@ -114,16 +104,9 @@ open class MainActivity : AppCompatActivity() {
     }
 
 
-//Camera Code
-    //Method for Starting Camera
-    private fun startCamera() {
-        TODO("Not yet implemented")
-    }
-    //end of start camera method //Camera Code Till Now
-
     //function for searching the latest SMS and extracting URl from it.
     @RequiresApi(Build.VERSION_CODES.O)
-    fun extractURLfromSMS(){
+    fun extractUrlFromSms(){
         try {
 
             val editText = findViewById<View>(R.id.editText) as EditText
@@ -133,17 +116,17 @@ open class MainActivity : AppCompatActivity() {
             val reqCols = arrayOf("_id", "address", "body")
             val cursor = contentResolver.query(inboxURI, reqCols, null, null, null)
             cursor?.moveToFirst()
-            val StringVal = cursor?.getString(2)
-            val StringVal1 = StringVal?.split(" ","-")?.toTypedArray()
+            val stringVal = cursor?.getString(2)
+            val stringVal1 = stringVal?.split(" ","-")?.toTypedArray()
 
             val p = compile("(@)?(href=')?(HREF=')?(HREF=\")?(href=\")?(http://)?[a-zA-Z_0-9\\-]+(\\.\\w[a-zA-Z_0-9\\-]+)+(/[#&\\n\\-=?+%/.\\w]+)?")
             var flag = 0
-            if (StringVal1 != null)
-                for (i in StringVal1.indices){
+            if (stringVal1 != null)
+                for (i in stringVal1.indices){
 
-                if (p.matcher(StringVal1[i]).matches()) {
+                if (p.matcher(stringVal1[i]).matches()) {
                     makeText(context, "AutoScanned URL from SMS ", LENGTH_LONG).show()
-                    editText.setText(StringVal1[i])
+                    editText.setText(stringVal1[i])
                     flag++
                     break
                     }
@@ -156,7 +139,7 @@ open class MainActivity : AppCompatActivity() {
 
             /*
             if (cursor != null)
-                Toast.makeText(this, "Success read sms ${StringVal1?.get(5)} ", Toast.LENGTH_LONG ).show()
+                Toast.makeText(this, "Success read sms ${stringVal1?.get(5)} ", Toast.LENGTH_LONG ).show()
                */
 
             cursor?.close()
@@ -169,7 +152,7 @@ open class MainActivity : AppCompatActivity() {
 
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun callAPI(view:View?){
+    fun callAPI(view: View) {
        // val intent = Intent(this, Scan::class.java)
         val editText = findViewById<View>(R.id.editText) as EditText
         val url = editText.text.toString()
@@ -181,12 +164,12 @@ open class MainActivity : AppCompatActivity() {
 
             if (p.matcher(url).matches()) {
 
-                //calling dbhandler and inserting url
-                    Log.d("MainActivity ","Before DBhandler");
+                //calling db handler and inserting url
+                    Log.d("MainActivity ","Before DB handler")
                 val db = DBHandler(this,null)
                 db.addName(url)
 
-                val malicious = postURL(context,url)
+                val malicious = postURL(url)
                 if (malicious<10)
                 Toast(context).showCustomToast("Good To Go!!!",this)
                 else
@@ -205,7 +188,7 @@ open class MainActivity : AppCompatActivity() {
     //function for sending the extracted URL to the server
     @RequiresApi(Build.VERSION_CODES.O)
     @Throws(IOException::class)
-    fun postURL(context: Context, urlToBeScanned: String):Int {
+    fun postURL(urlToBeScanned: String):Int {
 
         val gfgPolicy = ThreadPolicy.Builder().permitAll().build()
         StrictMode.setThreadPolicy(gfgPolicy)
@@ -224,7 +207,7 @@ open class MainActivity : AppCompatActivity() {
                 var id = data.getString("id")
                 id = id.split("-").toTypedArray()[1]
                 Log.i("URL Submitted", "ID generated:  $id")
-                result = getData(context,id)
+                result = getData(id)
             }
             response.close()
 
@@ -241,9 +224,9 @@ open class MainActivity : AppCompatActivity() {
     //function fot getting the data from the server
     @RequiresApi(Build.VERSION_CODES.O)
     @Throws(IOException::class)
-    fun getData(context:Context,id:String): Int {
+    fun getData(id: String): Int {
 
-        val request = Request.Builder().url("https://www.virustotal.com/api/v3/urls/" + id ).get().addHeader("x-apikey", "2e50561b4a38bc74e24303a15f4c4afb404d4a5252470225a4021994806042cb").build()
+        val request = Request.Builder().url("https://www.virustotal.com/api/v3/urls/$id").get().addHeader("x-apikey", "2e50561b4a38bc74e24303a15f4c4afb404d4a5252470225a4021994806042cb").build()
         val client = OkHttpClient()
         val call = client.newCall(request)
         var malicious = 0
@@ -254,10 +237,10 @@ open class MainActivity : AppCompatActivity() {
                 val json = JSONObject(body)
                 val data = json.getJSONObject("data")
                 val attributes = data.getJSONObject("attributes")
-                val last_analysis_stats = attributes.getJSONObject("last_analysis_stats")
-                val harmless = last_analysis_stats.getInt("harmless")
-                    malicious = last_analysis_stats.getInt("malicious")
-                val suspicious = last_analysis_stats.getInt("suspicious")
+                val lastAnalysisStats = attributes.getJSONObject("last_analysis_stats")
+                val harmless = lastAnalysisStats.getInt("harmless")
+                    malicious = lastAnalysisStats.getInt("malicious")
+                //val suspicious = lastAnalysisStats.getInt("suspicious")
                 Log.i("Successful Scan ", " harmless count: $harmless")
 
             }
@@ -271,7 +254,7 @@ open class MainActivity : AppCompatActivity() {
     }
 
 
-    fun Toast.showCustomToast(message: String,activity:Activity) {
+    private fun Toast.showCustomToast(message: String, activity:Activity) {
         val layout = activity.layoutInflater.inflate(
             R.layout.activity_scan,
             activity.findViewById(R.id.toast_container)
@@ -292,12 +275,12 @@ open class MainActivity : AppCompatActivity() {
 
 
 
-    val requestCode = 1
+    private val requestCode = 1
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        var id=""
-        var malicious=0
+        val id: String
+        var malicious = 0
         if(requestCode == requestCode && resultCode == Activity.RESULT_OK )
         {
             if (data==null)
@@ -318,15 +301,12 @@ open class MainActivity : AppCompatActivity() {
     }
 
     //function to choose files from the file manager
-    fun filePicker(view:View?){
+    fun filePicker(view: View) {
         val intent = Intent(Intent.ACTION_GET_CONTENT).apply { type = "*/*" }
         startActivityForResult(intent,requestCode)
-
     }
 
 }///end of MainActivity class
-
-
 
 
 
